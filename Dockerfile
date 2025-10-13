@@ -1,64 +1,83 @@
-# Use Python 3.11 slim image
-FROM python:3.11-slim
+# ==============================================================================
+# Tahap 1: Build Stage - Menginstal dependensi
+# ==============================================================================
+# Gunakan image Python lengkap untuk mengkompilasi dependensi jika diperlukan [cite: 1]
+FROM python:3.11-slim as builder
 
-# Set environment variables
+# Set environment variables [cite: 1]
 ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    DEBIAN_FRONTEND=noninteractive
+    PYTHONUNBUFFERED=1
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
+# Instal dependensi sistem yang dibutuhkan untuk build [cite: 1]
+RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     g++ \
     libffi-dev \
     libssl-dev \
-    libjpeg-dev \
-    libpng-dev \
-    libwebp-dev \
-    libopus-dev \
-    libvpx-dev \
-    libopusfile-dev \
-    libwebpdemux-dev \
-    libavformat-dev \
-    libavcodec-dev \
-    libavdevice-dev \
-    libavfilter-dev \
-    libswscale-dev \
-    libswresample-dev \
-    ffmpeg \
-    wget \
-    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Set work directory
 WORKDIR /app
 
-# Copy requirements file
+# Buat virtual environment untuk isolasi dependensi
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Salin file requirements terlebih dahulu untuk caching [cite: 3]
 COPY requirements.txt .
 
-# Install Python dependencies
+# Instal dependensi Python ke dalam virtual environment [cite: 3]
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Copy bot code
-COPY bot.py .
+# ==============================================================================
+# Tahap 2: Final Stage - Image produksi yang ramping
+# ==============================================================================
+# Mulai dari image slim yang bersih [cite: 1]
+FROM python:3.11-slim
 
-# Create non-root user
-RUN useradd -m -u 1000 botuser && \
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+# Instal HANYA dependensi sistem yang dibutuhkan saat runtime [cite: 1, 2]
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ffmpeg \
+    libopus-dev \
+    libwebp-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set work directory
+WORKDIR /app
+
+# Salin virtual environment dari build stage
+COPY --from=builder /opt/venv /opt/venv
+
+# Salin kode bot
+COPY bot.py . 
+
+# Buat pengguna non-root untuk keamanan 
+RUN useradd -m -r -u 1000 botuser && \
     chown -R botuser:botuser /app
 
-# Switch to non-root user
+# Ganti ke pengguna non-root 
 USER botuser
 
-# Create session directory
+# Buat direktori sessions yang dimiliki oleh botuser 
 RUN mkdir -p /app/sessions
 
-# Expose port (if needed for health checks)
+# Atur PATH agar menggunakan Python dari venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Expose port untuk health check Kinsta [cite: 5]
 EXPOSE 8080
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8080/health || exit 1
+# Health check (opsional, tapi bagus untuk Kinsta) [cite: 5]
+# HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+#     CMD curl -f http://localhost:8080/ || exit 1
+# Catatan: Healthcheck di-disable karena bot ini tidak memiliki server web.
+# Kinsta akan memonitor prosesnya secara langsung.
 
-# Run the bot
+# Perintah untuk menjalankan bot [cite: 5]
 CMD ["python", "bot.py"]
