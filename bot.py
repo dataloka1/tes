@@ -19,11 +19,11 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Configuration
-API_ID = int(os.getenv('API_ID', '0'))
-API_HASH = os.getenv('API_HASH', '')
-BOT_TOKEN = os.getenv('BOT_TOKEN', '')
-MODAL_API_URL = os.getenv('MODAL_API_URL', 'https://your-app.modal.run')
-ADMIN_ID = int(os.getenv('ADMIN_ID', '0'))
+API_ID = int(os.getenv('API_ID', '10446785'))
+API_HASH = os.getenv('API_HASH', '4261b62d60200eb99a38dcd8b71c8634')
+BOT_TOKEN = os.getenv('BOT_TOKEN', '8222362928:AAG85K4WRPmf2yBPb_6j3uJiMHDYgscgolc')
+MODAL_API_URL = os.getenv('MODAL_API_URL', 'https://oktetod--comfyui-wan2-2-complete-production-fastapi-app.modal.run')
+ADMIN_ID = int(os.getenv('ADMIN_ID', '8484686373'))
 
 # Bot configuration
 BOT_USERNAME = os.getenv('BOT_USERNAME', 'WanVideoBot')
