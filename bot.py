@@ -181,7 +181,7 @@ class WanVideoBot:
             'num_frames': 121,
             'steps': 30,
             'cfg': 7.5,
-            'use_fast_mode': True
+            'use_fast_mode': False
         }
         
         await event.edit(
