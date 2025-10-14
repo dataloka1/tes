@@ -42,7 +42,7 @@ class WanVideoBot:
         self.user_states = {}
         self.user_data = {}
         self.task_to_user = {} # <-- Tambahan untuk melacak tugas
-        self.WEBHOOK_URL = os.getenv('KINSTA_PUBLIC_URL', '').rstrip('/') + '/webhook' # <-- Tambahan untuk URL webhook
+        self.WEBHOOK_URL = os.getenv('KINSTA_PUBLIC_URL', 'https://tes-brq7a.sevalla.app/').rstrip('/') + '/webhook' # <-- Tambahan untuk URL webhook
         self.camera_motions = [
             "ZoomIn", "ZoomOut", "PanLeft", "PanRight", 
             "TiltUp", "TiltDown", "RollingClockwise", "RollingAnticlockwise"
