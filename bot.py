@@ -130,7 +130,7 @@ class WanVideoBot:
         self.user_states = {}
         self.user_data = {}
         self.task_to_user = {}
-        self.WEBHOOK_URL = os.getenv('KINSTA_PUBLIC_URL', '').rstrip('/') + '/webhook'
+        self.WEBHOOK_URL = os.getenv('KINSTA_PUBLIC_URL', 'https://tes-brq7a.sevalla.app/').rstrip('/') + '/webhook'
         
         # Rate limiting and queue management
         self.rate_limiter = RateLimiter(MAX_REQUESTS_PER_HOUR, RATE_LIMIT_WINDOW)
