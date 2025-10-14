@@ -181,7 +181,7 @@ class WanVideoBot:
             'num_frames': 121,
             'steps': 30,
             'cfg': 7.5,
-            'use_fast_mode': False
+            'use_fast_mode': True
         }
         
         await event.edit(
@@ -207,7 +207,7 @@ class WanVideoBot:
             'num_frames': 81,
             'steps': 20,
             'cfg': 3.5,
-            'use_fast_mode': False
+            'use_fast_mode': True
         }
         
         await event.edit(
@@ -596,7 +596,7 @@ class WanVideoBot:
                 await processing_msg.edit("❌ Invalid request type")
                 return
             
-            response = requests.post(endpoint, json=payload, timeout=300)
+            response = requests.post(endpoint, json=payload, timeout=3000)
             
             if response.status_code == 200:
                 result = response.json()
