@@ -9,7 +9,6 @@ from datetime import datetime
 import requests
 from telethon import TelegramClient, events
 from telethon.tl import types
-from telethon.tl.types import InputMediaPhoto, InputMediaDocument, InputMediaVideo, InputMediaAnimation
 from telethon.tl.custom import Button
 
 # Configure logging
