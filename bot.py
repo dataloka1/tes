@@ -51,7 +51,6 @@ class WanVideoBot:
         self.lora_registry = {}
         self.controlnet_list = list(CONTROLNET_TYPES.keys())
         self.setup_handlers()
-        asyncio.create_task(self.load_available_loras())
     
     async def load_available_loras(self):
         try:
@@ -1009,7 +1008,16 @@ class WanVideoBot:
             buttons=[[Button.inline("📖 Full Help", "help"), Button.inline("🚀 Start", "main_menu")]]
         )
     
+    # Di dalam class WanVideoBot:
     def run(self):
+    # TAMBAHKAN BLOK INI
+        logger.info("Initializing bot and loading available LoRAs...")
+        try:
+            self.client.loop.run_until_complete(self.load_available_loras())
+        except Exception as e:
+            logger.critical(f"CRITICAL: Failed to load LoRAs on startup. Bot cannot function properly. Error: {e}")
+            return # Hentikan bot jika LoRA gagal dimuat
+
         logger.info(f"Bot started! Username: {BOT_USERNAME}")
         logger.info(f"API URL: {MODAL_API_URL}")
         logger.info("Features: 50 LoRAs, 4 ControlNets, 3 Generation Modes")
